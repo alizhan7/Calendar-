@@ -1,0 +1,39 @@
+.reminders-container {
+  padding: 30px;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.reminder-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.reminder-form input {
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+.reminder-form button {
+  padding: 10px;
+  background-color: #5e2ca5;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.reminder-list {
+  margin-top: 20px;
+  list-style: none;
+  padding: 0;
+}
+
+.reminder-list li {
+  padding: 10px;
+  border-bottom: 1px solid #ccc;
+  display: flex;
+  justify-content: space-between;
+}

@@ -1,0 +1,9 @@
+.footer {
+  background-color: rgba(245, 240, 255, 0.9);
+  padding: 10px 15px;
+  text-align: center;
+  color: #5e2ca5;
+  width: 100%;
+  backdrop-filter: blur(2px);
+  margin-top: auto; /* Pushes footer to the bottom */
+}

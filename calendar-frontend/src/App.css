@@ -1,0 +1,47 @@
+/* Prevent horizontal scroll */
+html, body {
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+
+/* Ensure root takes full height */
+#root {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Adjust app-container */
+.app-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh; /* ensures it fills screen */
+  overflow-x: hidden; /* removes horizontal scrollbar */
+}
+
+/* Ensure layout takes available vertical space */
+.main-layout {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+/* Scroll only vertically */
+.main-content {
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;
+  overflow-x: hidden; /* removes horizontal scroll */
+}
+
+/* Footer pinned at the bottom, doesn't overlap */
+.footer {
+  background-color: rgba(245, 240, 255, 0.9);
+  padding: 10px 15px;
+  text-align: center;
+  color: #5e2ca5;
+  backdrop-filter: blur(2px);
+  width: 100%;
+  margin-top: auto; /* pushes footer to bottom */
+}

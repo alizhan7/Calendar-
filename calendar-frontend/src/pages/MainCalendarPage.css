@@ -1,0 +1,90 @@
+.main-calendar-page {
+  display: flex;
+  padding: 20px;
+  gap: 20px;
+}
+
+/* ───── Mini Calendar Styles ───── */
+.mini-calendar {
+  width: 250px;
+}
+
+.mini-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 5px;
+}
+
+.mini-day-name {
+  font-weight: bold;
+  text-align: center;
+}
+
+.mini-day {
+  text-align: center;
+  padding: 6px;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.mini-day.today {
+  background-color: #007bff;
+  color: white;
+}
+
+.mini-day.dim {
+  opacity: 0.4;
+}
+
+.mini-day.selected {
+  background-color: #3399ff;
+  color: white;
+}
+
+.mini-day.today.selected {
+  background-color: #0056b3;
+  color: white;
+}
+
+/* ───── Big Week Calendar Styles ───── */
+.week-calendar {
+  flex: 1;
+}
+
+.week-header {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  margin-bottom: 10px;
+}
+
+.week-day {
+  text-align: center;
+  font-weight: bold;
+}
+
+.week-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  min-height: 300px;
+  border: 1px solid #ccc;
+}
+
+.week-column {
+  border-left: 1px solid #eee;
+  padding: 5px;
+  min-height: 100px;
+  position: relative;
+}
+
+.week-column.today {
+  background-color: #f0f8ff;
+}
+
+/* ───── Events ───── */
+.event-block {
+  background-color: #d0eaff;
+  margin: 4px 0;
+  padding: 6px;
+  border-left: 4px solid #3399ff;
+  border-radius: 4px;
+}

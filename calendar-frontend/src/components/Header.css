@@ -1,0 +1,32 @@
+.app-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #282c34;
+  color: white;
+  padding: 12px 24px;
+}
+
+.menu-btn {
+  font-size: 24px;
+  background: none;
+  color: white;
+  border: none;
+  cursor: pointer;
+  margin-right: 15px;
+}
+
+.nav-links {
+  display: flex;
+  gap: 15px;
+}
+
+.nav-links a {
+  color: white;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.nav-links a:hover {
+  text-decoration: underline;
+}
