@@ -18,6 +18,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.security.config.Customizer;
+import org.springframework.http.HttpMethod;
 
 import java.util.List;
 
@@ -31,10 +32,19 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
-                .cors(Customizer.withDefaults()) // ✅ Включаем CORS
+                .cors(Customizer.withDefaults())
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/**", "/api/reminders/**").permitAll()
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll() // ✅ Allow preflight requests
+                        .requestMatchers(
+                                "/api/auth/**",
+                                "/api/reminders/**",
+                                "/api/calendar/holidays/**",
+                                "/api/calendar/holidays/init",
+                                "/api/calendar/recommendations",
+                                "/api/calendar/today-or-recommendation"
+                        ).permitAll()
+                        .requestMatchers("/api/history/**").authenticated()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -61,8 +71,6 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
-
-    // ✅ Настройки CORS для React (localhost:3000)
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();

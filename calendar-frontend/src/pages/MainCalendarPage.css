@@ -1,78 +1,123 @@
 .main-calendar-page {
   display: flex;
   padding: 20px;
-  gap: 20px;
+  gap: 24px;
+  background-color: #f9f9fb;
+  min-height: 100vh;
+  font-family: 'Segoe UI', sans-serif;
 }
 
-/* ───── Mini Calendar Styles ───── */
+/* ───── Mini Calendar ───── */
 .mini-calendar {
-  width: 250px;
+  width: 260px;
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  padding: 16px;
 }
 
 .mini-grid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  gap: 5px;
+  gap: 6px;
+  margin-top: 12px;
 }
 
 .mini-day-name {
-  font-weight: bold;
+  font-weight: 600;
   text-align: center;
+  font-size: 0.85rem;
+  color: #555;
 }
 
 .mini-day {
   text-align: center;
-  padding: 6px;
+  padding: 8px;
   cursor: pointer;
-  border-radius: 4px;
+  border-radius: 8px;
+  transition: background-color 0.2s ease;
+  font-size: 0.85rem;
+}
+
+.mini-day:hover {
+  background-color: #e0f0ff;
 }
 
 .mini-day.today {
+  background-color: #3399ff;
+  color: white;
+}
+
+.mini-day.selected {
   background-color: #007bff;
   color: white;
+  font-weight: 600;
+}
+
+.mini-day.today.selected {
+  background-color: #0056b3;
 }
 
 .mini-day.dim {
   opacity: 0.4;
 }
 
-.mini-day.selected {
-  background-color: #3399ff;
-  color: white;
+.holiday-label {
+  display: block;
+  font-size: 0.75rem;
+  margin-top: 4px;
+  color: #b22222;
 }
 
-.mini-day.today.selected {
-  background-color: #0056b3;
-  color: white;
+/* ───── Holiday ───── */
+.mini-day.holiday {
+  background-color: #ffecec;
+  border: 1px solid #e74c3c;
+  color: #b22222;
+  font-weight: 500;
 }
 
-/* ───── Big Week Calendar Styles ───── */
+.mini-day.holiday:hover {
+  box-shadow: 0 0 4px rgba(231, 76, 60, 0.5);
+}
+
+/* ───── Week View ───── */
 .week-calendar {
   flex: 1;
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
 }
 
 .week-header {
   display: grid;
-  grid-template-columns: repeat(7, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  border-bottom: 1px solid #e0e0e0;
   margin-bottom: 10px;
 }
 
 .week-day {
   text-align: center;
-  font-weight: bold;
+  font-weight: 600;
+  color: #333;
+  padding-bottom: 8px;
 }
 
 .week-grid {
   display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  min-height: 300px;
-  border: 1px solid #ccc;
+  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  gap: 10px;
 }
 
 .week-column {
+  padding: 8px;
+  min-height: 120px;
   border-left: 1px solid #eee;
-  padding: 5px;
-  min-height: 100px;
+  background-color: #fafafa;
+  border-radius: 6px;
   position: relative;
 }
 
@@ -82,9 +127,218 @@
 
 /* ───── Events ───── */
 .event-block {
-  background-color: #d0eaff;
-  margin: 4px 0;
-  padding: 6px;
-  border-left: 4px solid #3399ff;
-  border-radius: 4px;
+  background-color: white;
+  border-radius: 6px;
+  padding: 8px;
+  margin: 6px 0;
+  font-size: 14px;
+  border-left: 4px solid transparent;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+}
+
+/* 👤 User-created event */
+.user-event {
+  color: #5e2ca5;
+  border-left-color: #5e2ca5;
+  font-weight: 500;
+}
+
+/* 🤖 Suggested event */
+.suggested-event {
+  color: #b45309;
+  border-left-color: #facc15;
+  font-weight: 500;
+}
+
+/* Optional emojis (you can remove if unwanted) */
+.user-event::before {
+  content: "👤 ";
+}
+
+.suggested-event::before {
+  content: "✨ ";
+}
+
+/* ───── Holidays in Week View ───── */
+.week-column .holiday-block {
+  background-color: #ffefef;
+  border-left: 4px solid #e74c3c;
+  color: #b22222;
+  font-weight: 500;
+  margin-bottom: 6px;
+}
+
+/* ───── Recommendations ───── */
+.recommendation-box {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.recommendation-box button {
+  padding: 8px 14px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.recommendation-box button:hover {
+  background-color: #0056b3;
+}
+
+.recommendation-text {
+  margin-top: 10px;
+  font-size: 0.85rem;
+  color: #333;
+  text-align: center;
+}
+
+/* ───── Floating Create Event Button ───── */
+.create-event-button {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  background-color: #5e2ca5;
+  color: white;
+  border: none;
+  border-radius: 40px;
+  padding: 12px 24px;
+  font-size: 1rem;
+  font-weight: bold;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  cursor: pointer;
+  z-index: 1500;
+  transition: background-color 0.3s ease;
+}
+
+.create-event-button:hover {
+  background-color: #4c1d95;
+}
+
+/* ───── Done Event Style ───── */
+.event-block.done,
+.event-block.done.user-event,
+.event-block.done.suggested-event {
+  background-color: #e0f9e0 !important;
+  border-left-color: #28a745 !important;
+  opacity: 0.95;
+  text-decoration: line-through;
+  color: #28a745 !important;
+}
+
+/* Optional: Add checkmark icon before title */
+.event-block.done strong::before {
+  content: "✔️ ";
+}
+
+/* ───── Modal Styles ───── */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 999;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.event-modal {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  width: 380px;
+  max-width: 90%;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  font-family: 'Segoe UI', sans-serif;
+  position: relative;
+}
+
+.event-modal h2 {
+  margin-bottom: 14px;
+  font-size: 1.3rem;
+  color: #5e2ca5;
+  text-align: center;
+}
+
+.form-group {
+  margin-bottom: 14px;
+}
+
+.form-group label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 4px;
+  font-size: 0.88rem;
+  color: #333;
+}
+
+.event-modal input,
+.event-modal textarea {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  resize: none;
+  box-sizing: border-box;
+  transition: all 0.2s ease;
+}
+
+.event-modal textarea {
+  overflow: hidden;
+  min-height: 60px;
+  max-height: 200px;
+}
+
+.checkbox-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #333;
+}
+
+.modal-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.btn {
+  padding: 8px 12px;
+  border: none;
+  border-radius: 6px;
+  font-weight: bold;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.btn.primary {
+  background-color: #5e2ca5;
+  color: white;
+}
+
+.btn.secondary {
+  background-color: #ccc;
+  color: black;
+}
+
+.btn.danger {
+  background-color: #e74c3c;
+  color: white;
+}
+
+.btn:hover {
+  opacity: 0.95;
 }

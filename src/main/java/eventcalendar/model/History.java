@@ -2,6 +2,7 @@ package eventcalendar.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+
 import java.time.LocalDateTime;
 
 @Entity
@@ -9,18 +10,16 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Event {
+public class History {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String title;
-    private String description;
-    private LocalDateTime startTime;
-    private LocalDateTime endTime;
-    @Column
-    private Boolean done = false; // add this
+    private String summary;
+
+    private LocalDateTime startDateTime;
+    private LocalDateTime endDateTime;
 
     @ManyToOne
     @JoinColumn(name = "user_id")

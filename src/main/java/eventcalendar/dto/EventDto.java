@@ -15,5 +15,7 @@ public class EventDto {
     private String description;
     private LocalDateTime startTime;
     private LocalDateTime endTime;
+    private Boolean done; // <- This must exist and have getters/setters
+
 }
 

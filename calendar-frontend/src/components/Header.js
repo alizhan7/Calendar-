@@ -1,19 +1,39 @@
 import React from 'react';
 import './Header.css';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
-const Header = ({ toggleSidebar }) => {
+const Header = ({ toggleSidebar, viewMode, setViewMode }) => {
+  const navigate = useNavigate();
+
+  const modes = [
+    { value: 'day', label: 'Day' },
+    { value: '3days', label: '3 Days' },
+    { value: 'workweek', label: 'Work Week' },
+    { value: 'week', label: 'Full Week' },
+  ];
+
   return (
     <header className="app-header">
-      <button className="menu-btn" onClick={toggleSidebar}>☰</button>
-      <h1>Event Calendar</h1>
-      <nav className="nav-links">
-        <Link to="/">Home</Link>
-        <Link to="/calendar">Calendar</Link>
-        <Link to="/login">Login</Link>
-        <Link to="/register">Register</Link> {/* ✅ Newly added */}
-        <Link to="/profile">Profile</Link>
-      </nav>
+      <div className="left-group">
+        <button className="menu-btn" onClick={toggleSidebar}>☰</button>
+        <div className="brand" onClick={() => navigate('/')} title="Go to Home">
+          Momento
+        </div>
+      </div>
+
+      <div className="right-header">
+        <div className="view-mode-switch">
+          {modes.map((mode) => (
+            <button
+              key={mode.value}
+              className={`view-mode-btn ${viewMode === mode.value ? 'active' : ''}`}
+              onClick={() => setViewMode(mode.value)}
+            >
+              {mode.label}
+            </button>
+          ))}
+        </div>
+      </div>
     </header>
   );
 };
