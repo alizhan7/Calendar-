@@ -1,0 +1,45 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:16
+    container_name: calendar-db
+    environment:
+      POSTGRES_DB: calendar_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    networks:
+      - app-network
+
+  backend:
+    build:
+      context: .
+      dockerfile: src/Dockerfile
+    container_name: java-backend
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/calendar_db
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+    networks:
+      - app-network
+
+  frontend:
+    build:
+      context: ./calendar-frontend
+      dockerfile: Dockerfile
+    container_name: react-frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+    networks:
+      - app-network
+
+networks:
+  app-network:
