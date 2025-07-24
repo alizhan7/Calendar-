@@ -145,8 +145,8 @@
 
 /* 🤖 Suggested event */
 .suggested-event {
-  color: #b45309;
-  border-left-color: #facc15;
+  color: #5e2ca5;
+  border-left-color: #5e2ca5;
   font-weight: 500;
 }
 
@@ -341,4 +341,70 @@
 
 .btn:hover {
   opacity: 0.95;
+}
+.year-view {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  padding: 20px;
+}
+
+.month-grid {
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 12px;
+  background-color: #fefefe;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+}
+
+.month-name {
+  text-align: center;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: #5e2ca5;
+}
+
+.month-days-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+  font-size: 12px;
+}
+
+.month-day-header {
+  font-weight: bold;
+  text-align: center;
+  color: #666;
+}
+
+.calendar-day {
+  min-height: 50px;
+  background-color: #f9f9f9;
+  padding: 4px;
+  border-radius: 6px;
+  position: relative;
+  text-align: left;
+  font-size: 12px;
+  border: 1px solid #eee;
+}
+
+.calendar-day:hover {
+  background-color: #f0eaff;
+  cursor: pointer;
+}
+
+.calendar-day .event {
+  margin-top: 2px;
+  padding: 1px 3px;
+  background-color: #e0d4f7;
+  border-radius: 4px;
+  font-size: 10px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Optional: highlight today's date */
+.calendar-day.today {
+  border: 2px solid #5e2ca5;
 }

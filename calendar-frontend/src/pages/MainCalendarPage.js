@@ -7,7 +7,7 @@ import {
   fetchTodayOrRecommended,
   updateEvent,
   deleteEvent,
-  createEvent // <- Make sure this exists in calendarApi.js
+  createEvent
 } from '../api/calendarApi';
 
 const MainCalendarPage = ({ viewMode }) => {
@@ -20,20 +20,16 @@ const MainCalendarPage = ({ viewMode }) => {
     const loadAll = async () => {
       try {
         const allEvents = await fetchEvents();
-        setEvents(allEvents);
+        const recommended = await fetchTodayOrRecommended();
 
-        const today = new Date().toDateString();
-        const hasTodayEvent = allEvents.some(e => {
-          const dateStr = e.startTime || e.startDateTime;
-          if (!dateStr) return false;
-          const date = new Date(dateStr);
-          return date.toDateString() === today;
-        });
+        const uniqueRecommendations = recommended.filter(r =>
+          !allEvents.some(e => e.title === r.title && e.startTime === r.startTime)
+        ).map(r => ({
+          ...r,
+          title: r.title.startsWith('[Suggested]') ? r.title : `[Suggested] ${r.title}`
+        }));
 
-        if (!hasTodayEvent) {
-          const fallback = await fetchTodayOrRecommended();
-          setEvents(prev => [...prev, ...fallback]);
-        }
+        setEvents([...allEvents, ...uniqueRecommendations]);
 
         const year = new Date().getFullYear();
         const holidays = await fetchHolidays(year);
@@ -60,10 +56,10 @@ const MainCalendarPage = ({ viewMode }) => {
     const lower = title.toLowerCase();
     if (lower.includes('nauryz')) return '🌸';
     if (lower.includes('new year')) return '🎆';
-    if (lower.includes('victory')) return '🎖️';
+    if (lower.includes('victory day')) return '🎖️';
     if (lower.includes('independence')) return '🇰🇿';
-    if (lower.includes('capital')) return '🏙️';
-    if (lower.includes('women')) return '👩';
+    if (lower.includes('capital city day')) return '🏙️';
+    if (lower.includes('womens day')) return '👩';
     if (lower.includes('unity')) return '🤝';
     if (lower.includes('constitution')) return '📜';
     return '🎉';
@@ -98,6 +94,8 @@ const MainCalendarPage = ({ viewMode }) => {
         day.setDate(start.getDate() + i);
         days.push(day);
       }
+    } else if (viewMode === 'year') {
+      return []; // year handled separately
     } else {
       const start = getStartOfWeek(selectedDate);
       for (let i = 0; i < 7; i++) {
@@ -112,16 +110,32 @@ const MainCalendarPage = ({ viewMode }) => {
   const displayedDays = getDisplayedDays();
 
   const handleSave = async (updatedEvent) => {
-  console.log('Saved event:', updatedEvent);
-  console.log('Updated state preview:', events);
     try {
+      const isSuggested = updatedEvent.title.startsWith('[Suggested] ');
+      const cleanTitle = updatedEvent.title.replace('[Suggested] ', '');
+      const eventToSave = {
+        ...updatedEvent,
+        title: cleanTitle
+      };
+
+      let savedEvent;
       if (updatedEvent.id) {
-        const res = await updateEvent(updatedEvent.id, updatedEvent);
-        setEvents(prev => prev.map(e => e.id === res.id ? res : e));
+        savedEvent = await updateEvent(updatedEvent.id, eventToSave);
+        setEvents(prev =>
+          prev.map(e => e.id === savedEvent.id ? savedEvent : e)
+        );
       } else {
-        const res = await createEvent(updatedEvent);
-        setEvents(prev => [...prev, res]);
+        savedEvent = await createEvent(eventToSave);
+        setEvents(prev => [
+          ...prev.filter(e =>
+            !(isSuggested &&
+              e.title === updatedEvent.title &&
+              e.startTime === updatedEvent.startTime)
+          ),
+          savedEvent
+        ]);
       }
+
       setSelectedEvent(null);
     } catch (err) {
       console.error('Failed to save event:', err);
@@ -138,62 +152,113 @@ const MainCalendarPage = ({ viewMode }) => {
     }
   };
 
-
   const handleDecline = async (eventId) => {
-    try {
-      await deleteEvent(eventId);
-      setEvents(prev => prev.filter(e => e.id !== eventId));
-      setSelectedEvent(null);
-    } catch (err) {
-      console.error('Failed to delete event:', err);
-    }
+    setEvents(prev => prev.filter(e => e.id !== eventId));
+    setSelectedEvent(null);
+  };
+
+  const renderYearView = () => {
+    const year = selectedDate.getFullYear();
+
+    return (
+      <div className="year-view">
+        {Array.from({ length: 12 }).map((_, monthIndex) => {
+          const daysInMonth = new Date(year, monthIndex + 1, 0).getDate();
+          const monthName = new Date(year, monthIndex, 1).toLocaleString('default', { month: 'long' });
+
+          return (
+            <div className="year-month" key={monthIndex}>
+              <div className="year-month-name">{monthName}</div>
+              <div className="year-days-grid">
+                {Array.from({ length: daysInMonth }).map((_, dayIndex) => {
+                  const date = new Date(year, monthIndex, dayIndex + 1);
+                  const dayEvents = events.filter(event => {
+                    const d = new Date(event.startTime || event.startDateTime);
+                    return isSameDay(d, date);
+                  });
+                  const holiday = isHoliday(date);
+
+                  return (
+                    <div key={dayIndex} className="year-day-cell" onClick={() => {
+                      setSelectedEvent({
+                        title: '',
+                        description: '',
+                        startTime: date.toISOString(),
+                        endTime: '',
+                        done: false,
+                      });
+                    }}>
+                      <div className="year-day-number">{dayIndex + 1}</div>
+                      {holiday && <div className="year-event holiday">{getHolidayIcon(holiday.title)}</div>}
+                      {dayEvents.map((event, i) => (
+                        <div
+                          key={i}
+                          className={`year-event ${event.title?.startsWith('[Suggested]') ? 'suggested' : ''} ${event.done ? 'done' : ''}`}
+                          title={event.title}
+                        >
+                          • {event.title}
+                        </div>
+                      ))}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    );
   };
 
   return (
     <div className="main-calendar-page">
-      <div className="week-calendar">
-        <div className="week-header">
-          {displayedDays.map((day, i) => (
-            <div key={i} className="week-day">
-              {day.toLocaleDateString('en-US', { weekday: 'short', day: 'numeric' })}
-            </div>
-          ))}
-        </div>
-
-        <div className="week-grid" style={{ gridTemplateColumns: `repeat(${displayedDays.length}, 1fr)` }}>
-          {displayedDays.map((day, i) => {
-            const dayEvents = events.filter(event => {
-              const dateStr = event.startTime || event.startDateTime;
-              if (!dateStr) return false;
-              const d = new Date(dateStr);
-              return d.toDateString() === day.toDateString();
-            });
-
-            const holiday = isHoliday(day);
-
-            return (
-              <div key={i} className="week-column">
-                {holiday && (
-                  <div className="event-block holiday-block">
-                    <span style={{ marginRight: '6px' }}>{getHolidayIcon(holiday.title)}</span>
-                    <strong>{holiday.title}</strong>
-                  </div>
-                )}
-                {dayEvents.map((event, index) => (
-                  <div
-                    key={index}
-                    className={`event-block ${event.title?.startsWith('[Suggested]') ? 'suggested-event' : 'user-event'} ${event.done ? 'done' : ''}`}
-                    onClick={() => setSelectedEvent(event)}
-                  >
-                    <strong>{event.title}</strong>
-                    <p>{event.description}</p>
-                  </div>
-                ))}
+      {viewMode === 'year' ? (
+        renderYearView()
+      ) : (
+        <div className="week-calendar">
+          <div className="week-header">
+            {displayedDays.map((day, i) => (
+              <div key={i} className="week-day">
+                {day.toLocaleDateString('en-US', { weekday: 'short', day: 'numeric', month: 'short' })}
               </div>
-            );
-          })}
+            ))}
+          </div>
+
+          <div className="week-grid" style={{ gridTemplateColumns: `repeat(${displayedDays.length}, 1fr)` }}>
+            {displayedDays.map((day, i) => {
+              const dayEvents = events.filter(event => {
+                const dateStr = event.startTime || event.startDateTime;
+                if (!dateStr) return false;
+                const d = new Date(dateStr);
+                return d.toDateString() === day.toDateString();
+              });
+
+              const holiday = isHoliday(day);
+
+              return (
+                <div key={i} className="week-column">
+                  {holiday && (
+                    <div className="event-block holiday-block">
+                      <span style={{ marginRight: '6px' }}>{getHolidayIcon(holiday.title)}</span>
+                      <strong>{holiday.title}</strong>
+                    </div>
+                  )}
+                  {dayEvents.map((event, index) => (
+                    <div
+                      key={index}
+                      className={`event-block ${event.title?.startsWith('[Suggested]') ? 'suggested-event' : 'user-event'} ${event.done ? 'done' : ''}`}
+                      onClick={() => setSelectedEvent(event)}
+                    >
+                      <strong>{event.title}</strong>
+                      <p>{event.description}</p>
+                    </div>
+                  ))}
+                </div>
+              );
+            })}
+          </div>
         </div>
-      </div>
+      )}
 
       <button
         className="create-event-button"

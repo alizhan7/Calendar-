@@ -10,6 +10,7 @@ const Header = ({ toggleSidebar, viewMode, setViewMode }) => {
     { value: '3days', label: '3 Days' },
     { value: 'workweek', label: 'Work Week' },
     { value: 'week', label: 'Full Week' },
+    { value: 'year', label: 'Year' }
   ];
 
   return (
